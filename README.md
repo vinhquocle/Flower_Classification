@@ -21,9 +21,32 @@ có thể thay mô hình ở đoạn  MODEL_PATH = ".....h5" bằng các mô hì
 2 cài môi trường 
 python -m venv venv
 venv\Scripts\activate
+
 pip install -r requirements.txt
+python src/main.py
+cd web
+python app.py
+Truy cập http://127.0.0.1:5000 để xem giao diện.
 
-
+project/
+├── README.md
+├── Report.pdf
+├── requirements.txt
+├── src/
+│ ├── preprocessing.py
+│ ├── eda.py
+│ ├── feature_engineering.py
+│ ├── model_cnn.py
+│ ├── model_mobileNetV2.py
+│ ├── model_EfficientNetB0.py
+│ ├── evaluation.py
+│ ├── main.py
+├── web/
+│ ├── app.py
+│ ├── templates/index.html
+│ |__ .....h5
+| |__ flower_data_split
+│ └── cat_to_name.json
 
 link dataset:https://drive.google.com/file/d/1hEytojL8-yMHRfIh74va7YkmN-qF80nW/view?usp=sharing
 link bestmodel:https://drive.google.com/file/d/1bDd7dLWYwnFeaFH6IjQRd-z7bPaHL0HI/view?usp=sharing
