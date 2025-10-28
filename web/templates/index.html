@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhận diện loài hoa</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f4f4f9; margin: 0; }
+        .container { background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
+        h1 { color: #333; }
+        input[type="file"] { margin: 1rem 0; }
+        button { background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 1rem; }
+        button:hover { background-color: #0056b3; }
+        #result { margin-top: 1.5rem; font-size: 1.2rem; color: #555; min-height: 50px; }
+        #preview { max-width: 300px; max-height: 300px; margin-top: 1rem; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Tải ảnh lên để nhận diện hoa</h1>
+        <input type="file" id="imageInput" accept="image/*">
+        <br>
+        <button id="predictBtn">Dự đoán</button>
+        <div id="result">
+            <p>Kết quả sẽ hiển thị ở đây...</p>
+        </div>
+        <img id="preview" src="" alt="Image preview">
+    </div>
+
+    <script>
+        const imageInput = document.getElementById('imageInput');
+        const predictBtn = document.getElementById('predictBtn');
+        const resultDiv = document.getElementById('result');
+        const previewImg = document.getElementById('preview');
+
+        // Hiển thị ảnh preview khi người dùng chọn
+        imageInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                previewImg.src = URL.createObjectURL(file);
+            }
+        });
+
+        predictBtn.addEventListener('click', async () => {
+            const file = imageInput.files[0];
+            if (!file) {
+                alert("Vui lòng chọn một ảnh!");
+                return;
+            }
+
+            // Tạo đối tượng FormData để gửi file
+            const formData = new FormData();
+            formData.append('file', file);
+
+            // Hiển thị thông báo đang xử lý
+            resultDiv.innerHTML = '<p>Đang phân tích...</p>';
+
+            try {
+                // Gửi yêu cầu POST đến backend
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                // Hiển thị kết quả
+                if (data.error) {
+                    resultDiv.innerHTML = `<p style="color: red;">Lỗi: ${data.error}</p>`;
+                } else {
+                    resultDiv.innerHTML = `
+                        <h2>${data.flower_name}</h2>
+                        <p>Độ tin cậy: <strong>${data.confidence}</strong></p>
+                    `;
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                resultDiv.innerHTML = '<p style="color: red;">Đã xảy ra lỗi khi kết nối đến máy chủ.</p>';
+            }
+        });
+    </script>
+</body>
+</html>
